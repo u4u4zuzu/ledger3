@@ -50,6 +50,18 @@ jobs:
             exit 1
           fi
 
+      - name: Decode keystore (release signing)
+
+        if: ${{ secrets.KEYSTORE_BASE64 != '' }}
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/keystore.jks
+          {
+            echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}"
+            echo "keyPassword=${{ secrets.KEY_PASSWORD }}"
+            echo "keyAlias=${{ secrets.KEY_ALIAS }}"
+            echo "storeFile=keystore.jks"
+          } > android/key.properties
+
       - name: Build APK
         run: flutter build apk --release
 
